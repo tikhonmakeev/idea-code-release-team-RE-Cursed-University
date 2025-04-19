@@ -21,9 +21,9 @@ class UserService:
             raise NotUniqueException
 
     async def auth_user(self, user_auth: UserAuth) -> User:
-        user_entry = await self.user_repository.get_user_by_login(user_auth.login)
-        if user_entry is None:
+        user = await self.user_repository.get_user_by_login(user_auth.login)
+        if user is None:
             raise AuthException
-        if not bcrypt.verify(user_auth.password, user_entry.password_hash):
+        if not bcrypt.verify(user_auth.password, user.password_hash):
             raise AuthException
-        return user_entry.to_user()
+        return user

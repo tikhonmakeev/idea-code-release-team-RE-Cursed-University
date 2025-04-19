@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 from enum import Enum
@@ -9,10 +11,11 @@ class MessageRole(str, Enum):
 
 
 class Message(BaseModel):
-    id: str
+    id: str | None = None
     body: str
     user_id: str
     role: MessageRole
+    created_at: datetime | None = None
 
 
 class MessageRequest(BaseModel):
