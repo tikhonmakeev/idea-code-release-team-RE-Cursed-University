@@ -1,14 +1,37 @@
 import os
-import tkinter as tk
-from tkinter import filedialog
 import PyPDF2
 import re
 import json
 
+# Function to process all files in a folder
+def process_folder(folder_path):
+    # Check if the folder exists
+    if not os.path.exists(folder_path):
+        print(f"Папка '{folder_path}' не найдена.")
+        return
+
+    # Iterate over all files in the folder
+    for file_name in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, file_name)
+
+        # Process PDF files
+        if file_name.endswith(".pdf"):
+            convert_pdf_to_text(file_path)
+
+        # Process TXT files
+        elif file_name.endswith(".txt"):
+            upload_txtfile(file_path)
+
+        # Process JSON files
+        elif file_name.endswith(".json"):
+            upload_jsonfile(file_path)
+
+        else:
+            print(f"Файл '{file_name}' не поддерживается. Пропускаем.")
+
 # Function to convert PDF to text and append to vault.txt
-def convert_pdf_to_text():
-    file_path = filedialog.askopenfilename(filetypes=[("PDF Files", "*.pdf")])
-    if file_path:
+def convert_pdf_to_text(file_path):
+    try:
         with open(file_path, 'rb') as pdf_file:
             pdf_reader = PyPDF2.PdfReader(pdf_file)
             num_pages = len(pdf_reader.pages)
@@ -18,8 +41,10 @@ def convert_pdf_to_text():
                 if page.extract_text():
                     text += page.extract_text() + " "
             
+            # Clean up text
             text = re.sub(r'\s+', ' ', text).strip()
             
+            # Split into chunks
             sentences = re.split(r'(?<=[.!?]) +', text)
             chunks = []
             current_chunk = ""
@@ -31,20 +56,25 @@ def convert_pdf_to_text():
                     current_chunk = sentence + " "
             if current_chunk:
                 chunks.append(current_chunk)
+            
+            # Append chunks to vault.txt
             with open("vault.txt", "a", encoding="utf-8") as vault_file:
                 for chunk in chunks:
                     vault_file.write(chunk.strip() + "\n")
-            print(f"PDF content appended to vault.txt with each chunk on a separate line.")
+            print(f"PDF файл '{file_path}' добавлен в vault.txt.")
+    except Exception as e:
+        print(f"Ошибка при обработке PDF файла '{file_path}': {str(e)}")
 
 # Function to upload a text file and append to vault.txt
-def upload_txtfile():
-    file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
-    if file_path:
+def upload_txtfile(file_path):
+    try:
         with open(file_path, 'r', encoding="utf-8") as txt_file:
             text = txt_file.read()
             
+            # Clean up text
             text = re.sub(r'\s+', ' ', text).strip()
             
+            # Split into chunks
             sentences = re.split(r'(?<=[.!?]) +', text)
             chunks = []
             current_chunk = ""
@@ -56,22 +86,28 @@ def upload_txtfile():
                     current_chunk = sentence + " "
             if current_chunk:
                 chunks.append(current_chunk)
+            
+            # Append chunks to vault.txt
             with open("vault.txt", "a", encoding="utf-8") as vault_file:
                 for chunk in chunks:
                     vault_file.write(chunk.strip() + "\n")
-            print(f"Text file content appended to vault.txt with each chunk on a separate line.")
+            print(f"Текстовый файл '{file_path}' добавлен в vault.txt.")
+    except Exception as e:
+        print(f"Ошибка при обработке текстового файла '{file_path}': {str(e)}")
 
 # Function to upload a JSON file and append to vault.txt
-def upload_jsonfile():
-    file_path = filedialog.askopenfilename(filetypes=[("JSON Files", "*.json")])
-    if file_path:
+def upload_jsonfile(file_path):
+    try:
         with open(file_path, 'r', encoding="utf-8") as json_file:
             data = json.load(json_file)
             
+            # Convert JSON to string
             text = json.dumps(data, ensure_ascii=False)
             
+            # Clean up text
             text = re.sub(r'\s+', ' ', text).strip()
             
+            # Split into chunks
             sentences = re.split(r'(?<=[.!?]) +', text)
             chunks = []
             current_chunk = ""
@@ -83,21 +119,21 @@ def upload_jsonfile():
                     current_chunk = sentence + " "
             if current_chunk:
                 chunks.append(current_chunk)
+            
+            # Append chunks to vault.txt
             with open("vault.txt", "a", encoding="utf-8") as vault_file:
                 for chunk in chunks:
                     vault_file.write(chunk.strip() + "\n")
-            print(f"JSON file content appended to vault.txt with each chunk on a separate line.")
-   
-root = tk.Tk()
-root.title("Upload .pdf, .txt, or .json")
+            print(f"JSON файл '{file_path}' добавлен в vault.txt.")
+    except Exception as e:
+        print(f"Ошибка при обработке JSON файла '{file_path}': {str(e)}")
 
-pdf_button = tk.Button(root, text="Upload PDF", command=convert_pdf_to_text)
-pdf_button.pack(pady=10)
+def main():
+    # Specify the folder path containing the files
+    folder_path = "/home/annalebedeva/Repos/idea-code-release-team-RE-Cursed-University/ai/resources"  # Укажите путь к вашей папке здесь
+    
+    # Process all files in the folder
+    process_folder(folder_path)
 
-txt_button = tk.Button(root, text="Upload Text File", command=upload_txtfile)
-txt_button.pack(pady=10)
-
-json_button = tk.Button(root, text="Upload JSON File", command=upload_jsonfile)
-json_button.pack(pady=10)
-
-root.mainloop()
+if __name__ == "__main__":
+    main()
