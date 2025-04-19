@@ -12,7 +12,6 @@
 .search__input {
     width: 100%;
     max-width: 800px;
-    height: 30px;
     border: 2px solid #E6D2FF;
     border-radius: 30px;
     padding: 10px;
@@ -26,5 +25,5 @@
     background: url('../../assets/search.svg') no-repeat center center;
     background-size: 40%;
     cursor: pointer;
-    width: 54px;
+    width: 42px;
 }
