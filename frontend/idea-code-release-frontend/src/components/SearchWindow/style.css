@@ -1,0 +1,36 @@
+.chat {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+}
+
+.chat__container {
+    width: 100%;
+    max-width: 800px;
+    padding-bottom: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+}
+
+.chat__message {
+    padding: 10px;
+    border-radius: 10px;
+    background: #ededed;
+    max-width: 85%;
+}
+
+.chat__user {
+    align-self: flex-end;
+    background: #E6D2FF;
+}
+
+.chat__ai {
+    align-self: flex-start;
+}

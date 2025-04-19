@@ -1,0 +1,11 @@
+.header {
+    padding: 30px;
+    margin-bottom: 20px;
+    background-color: #E6D2FF;
+    display: flex;
+    align-items: stretch;
+}
+
+.header__img {
+    height: 25px;
+}
