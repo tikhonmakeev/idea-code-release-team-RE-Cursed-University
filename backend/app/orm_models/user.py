@@ -11,4 +11,4 @@ class UserORM(BaseORM):
     password_hash: so.Mapped[str]
 
     def to_user(self) -> User:
-        return User(id=self.id, login=self.login, password_hash=self.password_hash)
+        return User(id=str(self.id), login=self.login, password_hash=self.password_hash)
