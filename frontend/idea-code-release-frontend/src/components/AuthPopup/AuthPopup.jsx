@@ -1,6 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import './style.css';
 
+const encodeCredentials = (username, password) => {
+    return btoa(unescape(encodeURIComponent(`${username}:${password}`)));
+  };
+
 const AuthPopup = ({ onClose, onAuthSuccess }) => {
   const [authMode, setAuthMode] = useState('login');
   const [username, setUsername] = useState('');
@@ -23,8 +27,8 @@ const AuthPopup = ({ onClose, onAuthSuccess }) => {
     e.preventDefault();
     setError('');
 
-    const endpoint = authMode === 'login' ? '#' : '/api/v1/auth/register';
-    const credentials = btoa(`${username}:${password}`);
+    const endpoint = authMode === 'login' ? '#' : 'http://localhost:8000/api/v1/auth/register';
+    const credentials = encodeCredentials(username, password);
 
     try {
       const response = await fetch(endpoint, {
