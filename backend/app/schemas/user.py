@@ -10,6 +10,7 @@ class User(BaseModel):
 class UserAuth(BaseModel):
     login: str
     password: str
+    password_hash: str | None = None
 
 
 class UserResponse(BaseModel):
