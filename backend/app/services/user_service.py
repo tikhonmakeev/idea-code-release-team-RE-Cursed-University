@@ -9,6 +9,9 @@ from app.services.exc import NotUniqueException, AuthException
 class UserService:
     user_repository: UserRepository
 
+    def __init__(self, user_repository: UserRepository):
+        self.user_repository = user_repository
+
     async def register_user(self, user_auth: UserAuth) -> User:
         user_auth.password_hash = bcrypt.hash(user_auth.password)
         try:
