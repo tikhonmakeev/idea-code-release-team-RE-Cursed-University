@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 import sqlalchemy as sa
 
 from app.orm_models.user import UserORM
-from app.repositories.exc import NotUniqueException
+from app.repositories.exc import ConstraintViolationException
 from app.schemas.user import UserAuth, User
 
 
@@ -23,7 +23,7 @@ class UserRepository:
                 await session.refresh(user_entry)
                 return user_entry.to_user()
             except IntegrityError:
-                raise NotUniqueException
+                raise ConstraintViolationException
 
     async def get_user_by_login(self, login: str) -> User | None:
         async with self.session_maker() as session:

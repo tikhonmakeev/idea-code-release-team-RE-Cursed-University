@@ -1,2 +1,2 @@
-class NotUniqueException(Exception):
+class ConstraintViolationException(Exception):
     pass
