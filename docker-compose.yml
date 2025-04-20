@@ -1,42 +1,73 @@
-version: "3.9"
+version: '3.8'
 
 services:
+  backend:
+    build: ./backend
+    ports:
+      - "8001:8001"
+    environment:
+      - DB_URL=postgresql+asyncpg://postgres:postgres@db:5432/postgres
+      - FAISS_INDEX_PATH=/faiss_indices
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+    volumes:
+      - ./faiss_indices:/faiss_indices
+
+  frontend:
+    build: ./frontend/idea-code-release-frontend  # Путь к фронтенду (нужно создать Dockerfile для фронта)
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
   db:
     image: postgres:15
-    restart: always
     environment:
-      POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
-
-  app:
-    build:
-      context: ./backend
-    depends_on:
-      - db
-    ports:
-      - "8000:8000"
-    environment:
-      DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
-      FAISS_INDEX_PATH: /app/faiss_indices
-    volumes:
-      - ./faiss_indices:/app/faiss_indices
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
 
   rag-model:
-    build:
-      context: ./ai
+    build: ./ai
+    container_name: rag_model
     depends_on:
-      - app
-    ports:
-      - "9000:9000"
+      - ollama
     environment:
-      FAISS_INDEX_PATH: /rag/faiss_indices
+      - FAISS_INDEX_PATH=/faiss_indices
+      - OLLAMA_API=http://ollama:11434
     volumes:
-      - ./faiss_indices:/rag/faiss_indices
+      - ./faiss_indices:/faiss_indices
+
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: always
+    entrypoint: sh -c "ollama serve & ollama pull llama3:8b && wait"
 
 volumes:
-  pgdata:
+  postgres_data:
+  ollama_data:
+
+networks:
+  app-network:
+    driver: bridge
