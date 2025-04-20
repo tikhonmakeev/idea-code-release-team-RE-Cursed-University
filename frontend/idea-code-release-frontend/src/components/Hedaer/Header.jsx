@@ -10,7 +10,7 @@ const Header = () => {
     !!localStorage.getItem('basicAuthCredentials')
   );
 
-  const handleAuthSuccess = (data, credentials) => {
+  const handleAuthSuccess = (credentials) => {
     localStorage.setItem('basicAuthCredentials', credentials);
     setIsAuthenticated(true);
   };
@@ -21,7 +21,7 @@ const Header = () => {
         <img src={logo} alt="Логотип" className='header__img'/>
       </a>
       {isAuthenticated ? (
-            <img src='../../assets/user.svg' alt="Аватар" className='header__img' />
+            <img src='../assets/user.svg' alt="Аватар" className='header__img' />
           ) : (
             <button className='header__btn' onClick={() => setShowAuthPopup(true)}></button>
           )}

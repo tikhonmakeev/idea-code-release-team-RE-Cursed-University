@@ -1,15 +1,15 @@
-import { useState, useRef, useEffect } from 'react';
-import './style.css';
+import { useState, useRef, useEffect } from "react";
+import "./style.css";
 
 const encodeCredentials = (username, password) => {
-    return btoa(unescape(encodeURIComponent(`${username}:${password}`)));
-  };
+  return btoa(unescape(encodeURIComponent(`${username}:${password}`)));
+};
 
 const AuthPopup = ({ onClose, onAuthSuccess }) => {
-  const [authMode, setAuthMode] = useState('login');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [authMode, setAuthMode] = useState("login");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const popupRef = useRef(null);
 
   useEffect(() => {
@@ -19,34 +19,48 @@ const AuthPopup = ({ onClose, onAuthSuccess }) => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose]);
 
   const handleAuth = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
-    const endpoint = authMode === 'login' ? '#' : 'http://localhost:8000/api/v1/auth/register';
+    const endpoint =
+      authMode === "register"
+        ? "http://192.168.0.139:8001/api/v1/auth/register"
+        : "http://192.168.0.139:8001/api/v1/auth/get_my_info";
     const credentials = encodeCredentials(username, password);
 
     try {
+      let method = "POST";
+      let body = JSON.stringify({
+        login: username,
+        password: password,
+      });
+      if (authMode === "login") {
+        method = "GET";
+        body = null;
+      }
       const response = await fetch(endpoint, {
-        method: 'POST',
+        method: method,
         headers: {
-          'Authorization': `Basic ${credentials}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Basic ${credentials}`,
+          "Content-Type": "application/json",
+        },
+        body: body
       });
 
       if (!response.ok) {
-        throw new Error(authMode === 'login' ? 
-          'Неверные логин или пароль' : 
-          'Регистрация не удалась');
+        throw new Error(
+          authMode === "login"
+            ? "Неверные логин или пароль"
+            : "Регистрация не удалась"
+        );
       }
-
-      const data = await response.json();
-      onAuthSuccess(data, credentials);
+      
+      onAuthSuccess(credentials);
       onClose();
     } catch (err) {
       setError(err.message);
@@ -57,7 +71,9 @@ const AuthPopup = ({ onClose, onAuthSuccess }) => {
     <div className="popup__overlay">
       <div className="popup" ref={popupRef}>
         <img src="../../../public/ico.png" alt="Лого" className="popup__img" />
-        <h2 className='popup__title'>{authMode === 'login' ? 'Вход' : 'Регистрация'}</h2>
+        <h2 className="popup__title">
+          {authMode === "login" ? "Вход" : "Регистрация"}
+        </h2>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleAuth}>
           <input
@@ -66,7 +82,7 @@ const AuthPopup = ({ onClose, onAuthSuccess }) => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
-            className='popup__input'
+            className="popup__input"
           />
           <input
             type="password"
@@ -74,21 +90,20 @@ const AuthPopup = ({ onClose, onAuthSuccess }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className='popup__input'
+            className="popup__input"
           />
           <div className="popup__btns">
-            <button 
-              type="submit" 
-              className="popup__btn primary"
-            >
-              {authMode === 'login' ? 'Войти' : 'Зарегистрироваться'}
+            <button type="submit" className="popup__btn primary">
+              {authMode === "login" ? "Войти" : "Зарегистрироваться"}
             </button>
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="popup__btn secondary"
-              onClick={() => setAuthMode(authMode === 'login' ? 'register' : 'login')}
+              onClick={() =>
+                setAuthMode(authMode === "login" ? "register" : "login")
+              }
             >
-              {authMode === 'login' ? 'Регистрация' : 'Вход'}
+              {authMode === "login" ? "Регистрация" : "Вход"}
             </button>
           </div>
         </form>
