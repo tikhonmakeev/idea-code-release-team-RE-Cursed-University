@@ -15,7 +15,7 @@ llm_client = OpenAI(base_url='http://localhost:11434/v1',
                      api_key='ollama')
 
 # Путь к хранилищу индексов (должен совпадать с embedding_service)
-INDEX_STORAGE_PATH = "faiss_indices"
+INDEX_STORAGE_PATH = os.getenv("FAISS_INDEX_PATH", "./faiss_indices")
 os.makedirs(INDEX_STORAGE_PATH, exist_ok=True)
 
 class QueryRequest(BaseModel):
