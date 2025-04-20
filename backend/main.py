@@ -8,6 +8,7 @@ import uvicorn
 
 from app.routers.rest.auth_handler import router as auth_router
 from app.routers.rest.message_handler import router as message_router
+from app.routers.rest.file_handler import router as file_router
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -18,6 +19,7 @@ app = FastAPI()
 routers = [
     auth_router,
     message_router,
+    file_router,
 ]
 
 for router in routers:
