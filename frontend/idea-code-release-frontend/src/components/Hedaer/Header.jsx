@@ -23,7 +23,7 @@ const Header = () => {
       {isAuthenticated ? (
             <button className='header__btn'></button>
           ) : (
-            <button className='header__btn header__enter' onClick={() => setShowAuthPopup(true)}>Войти</button>
+            <button className='header__enter' onClick={() => setShowAuthPopup(true)}>Войти</button>
           )}
 
       {showAuthPopup && (

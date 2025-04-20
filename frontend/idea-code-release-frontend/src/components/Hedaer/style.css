@@ -16,6 +16,13 @@
     background: url('../../assets/user.svg') no-repeat center center;
     background-size: 75%;
     border: none;
-
     cursor: pointer;
+}
+
+.header__enter {
+    background: none;
+    font-size: 18px;
+    padding: 15px 30px;
+    color: #8e5ce5;
+    font-weight: 600;
 }
