@@ -2,15 +2,18 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# Установка зависимостей
 COPY requirements.txt .
-
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Копирование всех файлов
 COPY . .
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+# Права на исполнение entrypoint
+RUN chmod +x entrypoint.sh
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+# Переменные окружения
+ENV DB_URL=postgresql+asyncpg://postgres:postgres@db:5432/postgres
 
+# Запуск через entrypoint
+ENTRYPOINT ["./entrypoint.sh"]
