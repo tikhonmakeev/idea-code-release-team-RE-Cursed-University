@@ -10,6 +10,7 @@ from alembic import context
 from app.core.database import DATABASE_URL
 from app.orm_models.user import UserORM
 from app.orm_models.message import MessageORM
+from app.orm_models.file import FileORM
 from app.orm_models.base import BaseORM
 
 # this is the Alembic Config object, which provides
