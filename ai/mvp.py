@@ -76,7 +76,7 @@ def rag_pipeline(query, file_path="vault.txt"):
 # Пример использования с интеграцией с upload.py
 if __name__ == "__main__":
     # Путь к папке с файлами
-    folder_path = "/home/annalebedeva/Repos/idea-code-release-team-RE-Cursed-University/ai/resources"
+    folder_path = "ai/resources"
     
     # Загружаем данные из папки в vault.txt
     from upload import process_folder  # Импортируем новую функцию
