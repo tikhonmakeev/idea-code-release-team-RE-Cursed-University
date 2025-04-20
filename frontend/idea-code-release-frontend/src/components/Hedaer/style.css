@@ -1,0 +1,21 @@
+.header {
+    padding: 15px 30px;
+    margin-bottom: 20px;
+    background-color: #E6D2FF;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+}
+
+.header__img {
+    height: 25px;
+}
+
+.header__btn {
+    display: block;
+    background: url('../../assets/user.svg') no-repeat center center;
+    background-size: 75%;
+    border: none;
+
+    cursor: pointer;
+}

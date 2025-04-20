@@ -2,16 +2,18 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Для psycopg2, alembic и компиляции
-RUN apt-get update && apt-get install -y gcc libpq-dev && apt-get clean
-
+# Установка зависимостей
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Копирование всех файлов
 COPY . .
 
-# entrypoint и миграции
-RUN chmod +x /app/entrypoint.sh /app/migrate.sh
+# Права на исполнение entrypoint
+RUN chmod +x entrypoint.sh
 
-ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+# Переменные окружения
+ENV DB_URL=postgresql+asyncpg://postgres:postgres@db:5432/postgres
+
+# Запуск через entrypoint
+ENTRYPOINT ["./entrypoint.sh"]
