@@ -80,4 +80,4 @@ def generate_llm_response(query: str, chunks: List[str]) -> str:
     return response.choices[0].message.content.strip()
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8001, workers=4)
+    uvicorn.run(app, host="0.0.0.0", port=8001)
