@@ -1,18 +1,26 @@
-version: "3.8"
+version: '3.8'
 
 services:
-  app:
-    build: .
+  backend:
+    build: ./backend
     ports:
-      - "8000:8000"
-    volumes:
-      - .:/app
+      - "8001:8001"
     environment:
       - DB_URL=postgresql+asyncpg://postgres:postgres@db:5432/postgres
     depends_on:
       db:
         condition: service_healthy
-    restart: unless-stopped
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend/idea-code-release-frontend  # Путь к фронтенду (нужно создать Dockerfile для фронта)
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
 
   db:
     image: postgres:15
@@ -29,6 +37,12 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - app-network
 
 volumes:
   postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
