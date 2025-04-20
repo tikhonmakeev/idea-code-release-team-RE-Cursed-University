@@ -6,7 +6,7 @@ import './style.css';
 const SearchWindow = () => {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const credentials = localStorage.getItem('basicAuthCredentials');
+  const [authStatus, setAuthStatus] = useState('unauthenticated'); // 'checking' | 'authenticated' | 'unauthenticated'
   const messagesEndRef = useRef(null); 
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -21,8 +21,23 @@ const SearchWindow = () => {
     scrollToBottom();
   }, [messages, isLoading]);
 
+  // Проверка валидности credentials
+  const checkAuth = useCallback(async () => {
+    const credentials = localStorage.getItem('basicAuthCredentials');
+    if (!credentials) {
+      setAuthStatus('unauthenticated');
+      return false;
+    } else {
+      setAuthStatus('authenticated');
+    }
+  }, [apiUrl]);
+
   const fetchHistory = useCallback(async () => {
+    if (authStatus !== 'authenticated') return;
+    
+    setIsLoading(true);
     try {
+      const credentials = localStorage.getItem('basicAuthCredentials');
       const response = await fetch(`${apiUrl}/messages/history`, {
         method: 'GET',
         headers: {
@@ -31,64 +46,70 @@ const SearchWindow = () => {
         },
       });
 
-      if (!response.ok) {
-        throw new Error('Ошибка загрузки истории');
-      }
-
-      const data = await response.json();
+      if (!response.ok) throw new Error('Ошибка загрузки истории');
       
-      // Преобразуем данные API в нужный формат
-      const formattedMessages = data.map(item => ({
+      const data = await response.json();
+      setMessages(data.map(item => ({
         text: item.body,
         isUser: item.role === 'user'
-      }));
-
-      setMessages(formattedMessages);
+      })));
     } catch (error) {
-      console.error('Ошибка загрузки истории:', error);
-      setMessages(prev => [...prev, {
+      console.error('Ошибка:', error);
+      setMessages([{
         text: 'Не удалось загрузить историю сообщений',
         isUser: false
       }]);
     } finally {
       setIsLoading(false);
     }
-  }, [credentials]);
+  }, [apiUrl, authStatus]);
 
   useEffect(() => {
-    // Добавляем проверку на наличие credentials
-    if (credentials) {
-      fetchHistory();
-    }
-  }, [fetchHistory, credentials]);
+    const init = async () => {
+      await checkAuth();
+      if (authStatus === 'authenticated') {
+        await fetchHistory();
+      }
+    };
+    init();
+  }, [checkAuth, fetchHistory, authStatus]);
 
   const handleSend = async (message) => {
+    if (!message.trim() || authStatus !== 'authenticated') return;
+
     setMessages(prev => [...prev, { text: message, isUser: true }]);
-    
     setIsLoading(true);
     
     try {
+      const credentials = localStorage.getItem('basicAuthCredentials');
       const response = await fetch(`${apiUrl}/messages`, {
         method: 'POST',
         headers: {
           'Authorization': `Basic ${credentials}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          body: message,
-        }),
+        body: JSON.stringify({ body: message }),
       });
-      const data = await response.json();
+
+      if (!response.ok) throw new Error('Ошибка отправки');
       
+      const data = await response.json();
       setMessages(prev => [...prev, { 
         text: data.body, 
-        isUser: false
+        isUser: false 
       }]);
     } catch (error) {
+      console.error('Ошибка:', error);
       setMessages(prev => [...prev, { 
         text: 'Ошибка соединения с сервером', 
         isUser: false 
       }]);
+      
+      // При ошибке 401 (Unauthorized) разлогиниваем
+      if (error.message.includes('401')) {
+        localStorage.removeItem('basicAuthCredentials');
+        setAuthStatus('unauthenticated');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -97,22 +118,40 @@ const SearchWindow = () => {
   return (
     <div className='chat'>
       <div className='chat__container'>
-        {messages.map((msg, index) => (
+        {authStatus === 'unauthenticated' ? (
           <Chat 
-            key={index} 
-            text={msg.text} 
-            isUser={msg.isUser} 
-          />
-        ))}
-        {isLoading && (
-          <Chat 
-            text="AI думает..." 
+            text="Для доступа к чату войдите в систему" 
             isUser={false} 
+            isSystemMessage={true}
           />
+        ) : (
+          <>
+            <Chat 
+              text="Вы успешно авторизованы" 
+              isUser={false} 
+              isSystemMessage={true} 
+            />
+            {messages.map((msg, index) => (
+              <Chat 
+                key={`${index}-${Date.now()}`} 
+                text={msg.text} 
+                isUser={msg.isUser} 
+              />
+            ))}
+          </>
+        )}
+        
+        {isLoading && (
+          <Chat text="AI думает..." isUser={false} />
         )}
         <div ref={messagesEndRef} />
       </div>
-      <Search onSend={handleSend} disabled={isLoading} />
+      
+      <Search 
+        onSend={handleSend} 
+        disabled={isLoading || authStatus !== 'authenticated'}
+        placeholder={authStatus !== 'authenticated' ? 'Авторизуйтесь для отправки' : 'Введите сообщение...'}
+      />
     </div>
   );
 };

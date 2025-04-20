@@ -2,7 +2,7 @@ import { useState } from 'react';
 import React from 'react';
 import './style.css';
 
-const Search = ({ onSend }) => {
+const Search = ({ onSend, placeholder }) => {
   const [message, setMessage] = useState('');
 
   const handleSubmit = (e) => {
@@ -32,7 +32,7 @@ const Search = ({ onSend }) => {
 
   return (
     <form className='search' method='POST' onSubmit={handleSubmit}>
-      <input type="text" placeholder='Поиск' onChange={(e) => setMessage(e.target.value)} value={message}className='search__input'/>
+      <input type="text" onChange={(e) => setMessage(e.target.value)} placeholder={placeholder}  value={message}className='search__input'/>
       <button type='submit' className='search__btn'></button>
       <button type='button' className='search__btn search__upload' onClick={handlePressInput}></button>
       <input type="file" className='search__files' id='files' multiple/>
