@@ -12,7 +12,7 @@ from datetime import datetime
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
 # Пути для хранения данных
-INDEX_STORAGE_PATH = "faiss_indices"
+INDEX_STORAGE_PATH = os.getenv("FAISS_INDEX_PATH", "./faiss_indices")
 METADATA_FILE = os.path.join(INDEX_STORAGE_PATH, "user_metadata.json")
 os.makedirs(INDEX_STORAGE_PATH, exist_ok=True)
 

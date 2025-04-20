@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: ./backend
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
+      FAISS_INDEX_PATH: /app/faiss_indices
+    volumes:
+      - ./faiss_indices:/app/faiss_indices
+
+  rag-model:
+    build:
+      context: ./ai
+    depends_on:
+      - app
+    ports:
+      - "9000:9000"
+    environment:
+      FAISS_INDEX_PATH: /rag/faiss_indices
+    volumes:
+      - ./faiss_indices:/rag/faiss_indices
+
+volumes:
+  pgdata:
