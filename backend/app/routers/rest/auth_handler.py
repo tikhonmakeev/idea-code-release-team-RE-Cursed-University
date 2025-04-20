@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends
 from app.schemas.user import UserAuth, UserResponse, User
 from app.services.exc import NotUniqueException
 from app.services.user_service import UserService
-from app.dependencies import get_user_service, get_user
+from app.core.dependencies import get_user_service, get_user
 
 router = APIRouter(prefix="/api/v1/auth",
                    tags=["auth"])

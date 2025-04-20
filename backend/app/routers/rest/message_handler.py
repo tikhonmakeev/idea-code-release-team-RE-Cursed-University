@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from app.dependencies import get_user, get_message_service
+from app.core.dependencies import get_user, get_message_service
 from app.schemas.message import MessageRequest, Message, MessageRole
 from app.schemas.user import User
 from app.services.message_service import MessageService
