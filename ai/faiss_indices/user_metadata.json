@@ -1,0 +1,8 @@
+{
+  "ann": {
+    "chunks_path": "faiss_indices/chunks_ann.json",
+    "index_path": "faiss_indices/index_ann.faiss",
+    "chunks_count": 24,
+    "timestamp": "2025-04-20 12:28:30.093279"
+  }
+}
