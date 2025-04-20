@@ -1,0 +1,40 @@
+.search {
+    width: 100%;
+    padding-bottom: 30px;
+    background: #FEFEFE;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    position: fixed;
+    bottom: 0;
+}
+
+.search__input {
+    width: 100%;
+    max-width: 800px;
+    border: 2px solid #E6D2FF;
+    border-radius: 30px;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.search__btn {
+    border: 2px solid #E6D2FF;
+    border-radius: 100%;
+    padding: 5px;
+    background: url('../../assets/search.svg') no-repeat center center;
+    background-size: 40%;
+    cursor: pointer;
+    width: 42px;
+}
+
+.search__upload {
+    background: url('../../assets/files.svg') no-repeat center center;
+    background-size: 40%;
+}
+
+.search__files {
+    position: absolute;
+    z-index: -100;
+    opacity: 0;
+}
