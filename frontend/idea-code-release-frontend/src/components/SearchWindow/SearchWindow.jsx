@@ -8,6 +8,7 @@ const SearchWindow = () => {
   const [isLoading, setIsLoading] = useState(false);
   const credentials = localStorage.getItem('basicAuthCredentials');
   const messagesEndRef = useRef(null); 
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ 
@@ -22,7 +23,7 @@ const SearchWindow = () => {
 
   const fetchHistory = useCallback(async () => {
     try {
-      const response = await fetch('http://192.168.0.139:8001/api/v1/messages/history', {
+      const response = await fetch(`${apiUrl}/messages/history`, {
         method: 'GET',
         headers: {
           'Authorization': `Basic ${credentials}`,
@@ -67,7 +68,7 @@ const SearchWindow = () => {
     setIsLoading(true);
     
     try {
-      const response = await fetch('http://192.168.0.139:8001/api/v1/messages', {
+      const response = await fetch(`${apiUrl}/messages`, {
         method: 'POST',
         headers: {
           'Authorization': `Basic ${credentials}`,

@@ -21,7 +21,7 @@ const Header = () => {
         <img src={logo} alt="Логотип" className='header__img'/>
       </a>
       {isAuthenticated ? (
-            <img src='../assets/user.svg' alt="Аватар" className='header__img' />
+            <button className='header__btn'></button>
           ) : (
             <button className='header__btn' onClick={() => setShowAuthPopup(true)}></button>
           )}

@@ -27,3 +27,14 @@
     cursor: pointer;
     width: 42px;
 }
+
+.search__upload {
+    background: url('../../assets/files.svg') no-repeat center center;
+    background-size: 40%;
+}
+
+.search__files {
+    position: absolute;
+    z-index: -100;
+    opacity: 0;
+}

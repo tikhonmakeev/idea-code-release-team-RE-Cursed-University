@@ -11,6 +11,7 @@ const AuthPopup = ({ onClose, onAuthSuccess }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const popupRef = useRef(null);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -29,8 +30,8 @@ const AuthPopup = ({ onClose, onAuthSuccess }) => {
 
     const endpoint =
       authMode === "register"
-        ? "http://192.168.0.139:8001/api/v1/auth/register"
-        : "http://192.168.0.139:8001/api/v1/auth/get_my_info";
+        ? `${apiUrl}/auth/register`
+        : `${apiUrl}/auth/get_my_info`;
     const credentials = encodeCredentials(username, password);
 
     try {
@@ -59,7 +60,7 @@ const AuthPopup = ({ onClose, onAuthSuccess }) => {
             : "Регистрация не удалась"
         );
       }
-      
+
       onAuthSuccess(credentials);
       onClose();
     } catch (err) {
